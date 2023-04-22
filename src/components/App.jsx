@@ -14,11 +14,19 @@ export class App extends Component {
     images: [],
     page: 1,
     loading: false,
+    showBtn: false,
+    findByKeyword: true,
   };
 
   searchByKeyword = key => {
     const keywordValue = Object.values(key);
-    this.setState({ keyword: keywordValue, page: 1, loading: false });
+    this.setState({
+      keyword: keywordValue,
+      page: 1,
+      loading: false,
+      showBtn: false,
+      findByKeyword: true,
+    });
   };
 
   onLoadMoreClick = () => {
@@ -37,10 +45,25 @@ export class App extends Component {
         const response = await axios.get(
           `${BACE_URL}/?q=${this.state.keyword}&page=${this.state.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
         );
-        this.setState(prevState => ({
-          images: [...prevState.images, ...response.data.hits],
-          loading: false,
-        }));
+        if (response.data.total === 0) {
+          this.setState({
+            images: [],
+            showBtn: false,
+            loading: false,
+            findByKeyword: false,
+          });
+        } else {
+          const totalPages = response.data.total;
+          this.setState(prevState => ({
+            images: [...prevState.images, ...response.data.hits],
+            loading: false,
+            showBtn: true,
+            findByKeyword: true,
+          }));
+          console.log(totalPages);
+        }
+
+        console.log(response);
       } catch (error) {
         console.error(error);
       }
@@ -48,13 +71,18 @@ export class App extends Component {
   }
 
   render() {
-    const { images, keyword, loading } = this.state;
+    const { images, keyword, loading, showBtn, findByKeyword } = this.state;
     return (
       <div>
         <Searchbar onSubmit={this.searchByKeyword} />
-        <ImageGallery images={images} />
+        {findByKeyword ? (
+          <ImageGallery images={images} />
+        ) : (
+          <p>Sorry, we can't find photo by tag {keyword}</p>
+        )}
+
         {loading && <Loader />}
-        {keyword !== '' && <Button onClick={this.onLoadMoreClick} />}
+        {showBtn && <Button onClick={this.onLoadMoreClick} />}
       </div>
     );
   }
