@@ -14,7 +14,7 @@ export class App extends Component {
     images: [],
     page: 1,
     loading: false,
-    showBtn: false,
+    total: 1,
     findByKeyword: true,
   };
 
@@ -24,7 +24,7 @@ export class App extends Component {
       keyword: keywordValue,
       page: 1,
       loading: false,
-      showBtn: false,
+      total: 1,
       findByKeyword: true,
     });
   };
@@ -56,14 +56,13 @@ export class App extends Component {
             findByKeyword: false,
           });
         } else {
-          const totalPages = response.data.total;
           this.setState(prevState => ({
             images: [...prevState.images, ...response.data.hits],
             loading: false,
             showBtn: true,
             findByKeyword: true,
+            total: response.data.total,
           }));
-          console.log(totalPages);
         }
 
         console.log(response);
@@ -71,43 +70,10 @@ export class App extends Component {
         console.error(error);
       }
     }
-
-    // if (
-    //   prevState.keyword !== this.state.keyword ||
-    //   prevState.page !== this.state.page
-    // ) {
-    // this.setState({ loading: true });
-    // try {
-    //   const response = await axios.get(
-    //     `${BACE_URL}/?q=${this.state.keyword}&page=${this.state.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-    //   );
-    //   if (response.data.total === 0) {
-    //     this.setState({
-    //       images: [],
-    //       showBtn: false,
-    //       loading: false,
-    //       findByKeyword: false,
-    //     });
-    //   } else {
-    //     const totalPages = response.data.total;
-    //     this.setState(prevState => ({
-    //       images: [...prevState.images, ...response.data.hits],
-    //       loading: false,
-    //       showBtn: true,
-    //       findByKeyword: true,
-    //     }));
-    //     console.log(totalPages);
-    //   }
-
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    // }
   }
 
   render() {
-    const { images, keyword, loading, showBtn, findByKeyword } = this.state;
+    const { images, keyword, loading, total, findByKeyword, page } = this.state;
     return (
       <div>
         <Searchbar onSubmit={this.searchByKeyword} />
@@ -118,7 +84,7 @@ export class App extends Component {
         )}
 
         {loading && <Loader />}
-        {showBtn && <Button onClick={this.onLoadMoreClick} />}
+        {total / 12 > page && <Button onClick={this.onLoadMoreClick} />}
       </div>
     );
   }
