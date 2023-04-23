@@ -9,6 +9,7 @@ export class ImageGalleryItem extends Component {
     modalAlt: '',
   };
 
+  // При натисненні на картинку зберігаємо її дані для модалки
   onSave = (img, alt) => {
     this.setState({
       isModalShown: true,
@@ -17,6 +18,7 @@ export class ImageGalleryItem extends Component {
     });
   };
 
+  // При натисненні виставляєм прапорець не показувати модалку
   onClose = () => {
     this.setState({
       isModalShown: false,
@@ -32,13 +34,15 @@ export class ImageGalleryItem extends Component {
     return (
       <>
         {images.map(item => (
-          <ListItem
-            key={item.id}
-            onClick={evt => {
-              this.onSave(item.largeImageURL, item.tags);
-            }}
-          >
-            <Image loading="lazy" src={item.webformatURL} alt={item.tags} />
+          <ListItem key={item.id}>
+            <Image
+              loading="lazy"
+              src={item.webformatURL}
+              alt={item.tags}
+              onClick={() => {
+                this.onSave(item.largeImageURL, item.tags);
+              }}
+            />
             {isModalShown && (
               <Modal alt={modalAlt} img={modalImg} onClose={this.onClose} />
             )}

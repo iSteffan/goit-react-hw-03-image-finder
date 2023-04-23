@@ -18,6 +18,7 @@ export class App extends Component {
     findByKeyword: true,
   };
 
+  // Отримуємо доступ до ключового слова / скидаємо прапорці в початковий стан
   searchByKeyword = key => {
     const keywordValue = Object.values(key);
     this.setState({
@@ -29,6 +30,7 @@ export class App extends Component {
     });
   };
 
+  // При кліку на кнопку змінюємо сторінку для пошуку
   onLoadMoreClick = () => {
     this.setState(prevSt => ({
       page: prevSt.page + 1,
@@ -48,18 +50,20 @@ export class App extends Component {
         const response = await axios.get(
           `${BACE_URL}/?q=${this.state.keyword}&page=${this.state.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
         );
+        // якщо нічого не знайдено - скидаємо всі прапорці та масив зображень
         if (response.data.total === 0) {
           this.setState({
             images: [],
-            showBtn: false,
             loading: false,
             findByKeyword: false,
           });
-        } else {
+        }
+        // Якщо отриманий масив не порожній то перезаписуємо масив зображень/вимикаємо спінер/
+        // встановлюєм прапорець findByKeyword/ записуємо заг кількість результатів
+        else {
           this.setState(prevState => ({
             images: [...prevState.images, ...response.data.hits],
             loading: false,
-            showBtn: true,
             findByKeyword: true,
             total: response.data.total,
           }));
@@ -75,12 +79,14 @@ export class App extends Component {
     return (
       <div>
         <Searchbar onSubmit={this.searchByKeyword} />
+
+        {/* Перевіряємо чи знайшли фото по запиту - показуємо галерею/повідомлення про невдалий пошук */}
         {findByKeyword ? (
           <ImageGallery images={images} />
         ) : (
           <p
             style={{
-              width: '400px',
+              width: '500px',
               marginLeft: 'auto',
               marginRight: 'auto',
               padding: '12px 16px',
@@ -88,11 +94,14 @@ export class App extends Component {
               fontSize: '20px',
             }}
           >
-            Sorry, we can't find photo by tag {keyword}
+            Sorry, we can't find photo by tag "{keyword}"
           </p>
         )}
 
+        {/* Перевіряємо стан loading та показуємо спінер*/}
         {loading && <Loader />}
+
+        {/* Перевіряємо кількість сторінок та показуємо кнопку "завантажити ще" */}
         {total / 12 > page && <Button onClick={this.onLoadMoreClick} />}
       </div>
     );
