@@ -1,8 +1,8 @@
 import { Formik } from 'formik';
-import { Field, Form, Header, Btn, BtnLabel } from './Searchbar.styled';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { Field, Form, Header, Btn, BtnLabel } from './Searchbar.styled';
 
 const FormSchema = Yup.object().shape({
   keyword: Yup.string().required('Required field!'),
