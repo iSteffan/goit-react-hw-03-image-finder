@@ -2,7 +2,6 @@ import { ListItem, Image } from './ImageGalleryItem.styled';
 import { Modal } from 'components/Modal/Modal';
 import { Component } from 'react';
 
-// export class ImageGalleryItem extends Component
 export class ImageGalleryItem extends Component {
   state = {
     isModalShown: false,
@@ -16,8 +15,12 @@ export class ImageGalleryItem extends Component {
       modalImg: img,
       modalAlt: alt,
     });
-    // console.log(img);
-    // console.log(alt);
+  };
+
+  onClose = () => {
+    this.setState({
+      isModalShown: false,
+    });
   };
 
   render() {
@@ -36,7 +39,9 @@ export class ImageGalleryItem extends Component {
             }}
           >
             <Image loading="lazy" src={item.webformatURL} alt={item.tags} />
-            {isModalShown && <Modal alt={modalAlt} img={modalImg} />}
+            {isModalShown && (
+              <Modal alt={modalAlt} img={modalImg} onClose={this.onClose} />
+            )}
           </ListItem>
         ))}
       </>
