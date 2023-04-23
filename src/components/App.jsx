@@ -64,8 +64,6 @@ export class App extends Component {
             total: response.data.total,
           }));
         }
-
-        console.log(response);
       } catch (error) {
         console.error(error);
       }
@@ -80,7 +78,18 @@ export class App extends Component {
         {findByKeyword ? (
           <ImageGallery images={images} />
         ) : (
-          <p>Sorry, we can't find photo by tag {keyword}</p>
+          <p
+            style={{
+              width: '400px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              padding: '12px 16px',
+              fontWeight: '500',
+              fontSize: '20px',
+            }}
+          >
+            Sorry, we can't find photo by tag {keyword}
+          </p>
         )}
 
         {loading && <Loader />}
