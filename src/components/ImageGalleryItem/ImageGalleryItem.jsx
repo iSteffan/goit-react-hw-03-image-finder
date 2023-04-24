@@ -27,28 +27,24 @@ export class ImageGalleryItem extends Component {
   };
 
   render() {
-    const {
-      images: { images },
-    } = this.props;
+    const { images } = this.props;
     const { isModalShown, modalImg, modalAlt } = this.state;
 
     return (
       <>
-        {images.map(item => (
-          <ListItem key={item.id}>
-            <Image
-              loading="lazy"
-              src={item.webformatURL}
-              alt={item.tags}
-              onClick={() => {
-                this.onSave(item.largeImageURL, item.tags);
-              }}
-            />
-            {isModalShown && (
-              <Modal alt={modalAlt} img={modalImg} onClose={this.onClose} />
-            )}
-          </ListItem>
-        ))}
+        <ListItem>
+          <Image
+            loading="lazy"
+            src={images.webformatURL}
+            alt={images.tags}
+            onClick={() => {
+              this.onSave(images.largeImageURL, images.tags);
+            }}
+          />
+          {isModalShown && (
+            <Modal alt={modalAlt} img={modalImg} onClose={this.onClose} />
+          )}
+        </ListItem>
       </>
     );
   }
