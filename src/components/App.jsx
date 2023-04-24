@@ -4,6 +4,7 @@ import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
+import { ErrorMessage } from './ImageGallery/ImageGallery.styled';
 
 const BACE_URL = 'https://pixabay.com/api';
 const API_KEY = '34039766-687567eb1e3c3ba001a14a80f';
@@ -84,18 +85,9 @@ export class App extends Component {
         {findByKeyword ? (
           <ImageGallery images={images} />
         ) : (
-          <p
-            style={{
-              width: '500px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              padding: '12px 16px',
-              fontWeight: '500',
-              fontSize: '20px',
-            }}
-          >
+          <ErrorMessage>
             Sorry, we can't find photo by tag "{keyword}"
-          </p>
+          </ErrorMessage>
         )}
 
         {/* Перевіряємо стан loading та показуємо спінер*/}
