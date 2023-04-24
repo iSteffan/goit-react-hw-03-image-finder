@@ -1,13 +1,10 @@
 import { Component } from 'react';
-import axios from 'axios';
+import { getImages } from './services';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { ErrorMessage } from './ImageGallery/ImageGallery.styled';
-
-const BACE_URL = 'https://pixabay.com/api';
-const API_KEY = '34039766-687567eb1e3c3ba001a14a80f';
 
 export class App extends Component {
   state = {
@@ -38,21 +35,13 @@ export class App extends Component {
     }));
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.keyword !== this.state.keyword ||
-      prevState.page !== this.state.page
-    ) {
-      prevState.keyword !== this.state.keyword
-        ? this.setState({ loading: true, images: [] })
-        : this.setState({ loading: true });
-
-      try {
-        const response = await axios.get(
-          `${BACE_URL}/?q=${this.state.keyword}&page=${this.state.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-        );
+  setImages = (keyword, page) => {
+    getImages(keyword, page)
+      .then(resp => resp.json())
+      .then(response => {
+        // console.log(response);
         // якщо нічого не знайдено - скидаємо всі прапорці та масив зображень
-        if (response.data.total === 0) {
+        if (response.total === 0) {
           this.setState({
             images: [],
             loading: false,
@@ -63,15 +52,26 @@ export class App extends Component {
         // встановлюєм прапорець findByKeyword/ записуємо заг кількість результатів
         else {
           this.setState(prevState => ({
-            images: [...prevState.images, ...response.data.hits],
+            images: [...prevState.images, ...response.hits],
             loading: false,
             findByKeyword: true,
-            total: response.data.total,
+            total: response.total,
           }));
         }
-      } catch (error) {
-        console.error(error);
-      }
+      })
+      .catch(error => console.error(error));
+  };
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.keyword !== this.state.keyword ||
+      prevState.page !== this.state.page
+    ) {
+      prevState.keyword !== this.state.keyword
+        ? this.setState({ loading: true, images: [] })
+        : this.setState({ loading: true });
+
+      this.setImages(this.state.keyword, this.state.page);
     }
   }
 
